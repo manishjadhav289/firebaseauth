@@ -96,188 +96,210 @@ export function LoginScreen({ onLoginSuccess, onBack }: LoginScreenProps) {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+    <View style={styles.overlayContainer}>
+      {/* Dimmed Background - tapping it closes the modal */}
+      <TouchableOpacity
+        style={styles.dimmedBackground}
+        activeOpacity={1}
+        onPress={() => {
+          if (onBack) onBack();
+        }}
+      />
 
-      {/* Header with Back Button */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => {
-          if (authMethod === 'selection') {
-            if (onBack) onBack();
-          } else {
-            switchMethod('selection');
-          }
-        }} style={styles.backButton}>
-          <Text style={styles.backButtonText}>✕</Text>
-        </TouchableOpacity>
-      </View>
+      <View style={[styles.bottomSheet, { paddingBottom: insets.bottom + 20 }]}>
+        {/* Drag Handle Icon */}
+        <View style={styles.handleContainer}>
+          <View style={styles.dragHandle} />
+        </View>
 
-      <View style={styles.content}>
+        {/* Header with Back Button (only show if deeply nested or just rely on drag handle/background to close) */}
+        {/* We can hide the 'X' button since we have the handle and background tap, but let's keep it minimal if needed,
+            or better yet, remove the explicit X header row to match the clean 'half screen' look which implies swipe/tap-out to close.
+        */}
 
-        {authMethod === 'selection' && (
-          <>
-            <Text style={styles.title}>First, let's set up your MobileX account.</Text>
-            <Text style={styles.subtitle}>You can come back anytime to pick up where you left off.</Text>
+        <View style={styles.content}>
 
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.socialButton}>
-                <Text style={styles.socialButtonText}>Continue with Apple</Text>
-              </TouchableOpacity>
+          {authMethod === 'selection' && (
+            <>
+              {/* ... existing selection TSX ... */}
+              <Text style={styles.title}>First, let's set up your MobileX account.</Text>
+              {/* ... */}
+              <Text style={styles.subtitle}>You can come back anytime to pick up where you left off.</Text>
 
-              <TouchableOpacity style={styles.socialButton}>
-                <Text style={styles.socialButtonText}>Continue with Google</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.whiteButton} onPress={() => switchMethod('email')}>
-                <Text style={styles.whiteButtonText}>Continue with email</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.whiteButton} onPress={() => switchMethod('phone')}>
-                <Text style={styles.whiteButtonText}>Continue with Phone</Text>
-              </TouchableOpacity>
-            </View>
-
-            <Text style={styles.disclaimer}>
-              By continuing, you agree to our <Text style={styles.bold}>Terms of Service</Text> and confirm that you've read our <Text style={styles.bold}>Privacy Policy</Text>.
-            </Text>
-          </>
-        )}
-
-        {authMethod === 'email' && (
-          <View style={styles.formContainer}>
-            <Text style={styles.formTitle}>Get started with MobileX.</Text>
-            <Text style={styles.formSubtitle}>You can come back anytime to pick up where you left off.</Text>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Email</Text>
-              <TextInput
-                style={styles.minimalInput}
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                editable={!loading}
-              />
-            </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Password</Text>
-              <TextInput
-                style={styles.minimalInput}
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                editable={!loading}
-              />
-            </View>
-
-            <TouchableOpacity
-              style={[styles.darkButton, loading && styles.buttonDisabled]}
-              onPress={handleEmailLogin}
-              disabled={loading}
-            >
-              {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.darkButtonText}>Login</Text>}
-            </TouchableOpacity>
-
-            <Text style={styles.disclaimer}>
-              By continuing, you agree to our <Text style={styles.bold}>Terms of Service</Text> and confirm that you've read our <Text style={styles.bold}>Privacy Policy</Text>.
-            </Text>
-          </View>
-        )}
-
-        {authMethod === 'phone' && (
-          <View style={styles.formContainer}>
-            {!confirm ? (
-              <>
-                <Text style={styles.formTitle}>Get a temporary PIN to sign in to your account.</Text>
-
-                <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>MobileX phone number</Text>
-                  <TextInput
-                    style={styles.minimalInput}
-                    placeholder="413-555-3854"
-                    placeholderTextColor="#999"
-                    value={phoneNumber}
-                    onChangeText={setPhoneNumber}
-                    keyboardType="phone-pad"
-                    editable={!loading}
-                  />
-                </View>
-
-                <TouchableOpacity
-                  style={[styles.darkButton, loading && styles.buttonDisabled]}
-                  onPress={handleSendCode}
-                  disabled={loading}
-                >
-                  {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.darkButtonText}>Next</Text>}
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.socialButton}>
+                  <Text style={styles.socialButtonText}>Continue with Apple</Text>
                 </TouchableOpacity>
 
-                <Text style={styles.disclaimer}>
-                  *PINs can only be sent to your MobileX number.
-                </Text>
-              </>
-            ) : (
-              <>
-                <Text style={styles.formTitle}>Enter your PIN.</Text>
-                <Text style={styles.formSubtitle}>Enter the code sent to {phoneNumber}</Text>
-
-                <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>Confirmation Code</Text>
-                  <TextInput
-                    style={styles.minimalInput}
-                    placeholder="000000"
-                    placeholderTextColor="#999"
-                    value={code}
-                    onChangeText={setCode}
-                    keyboardType="number-pad"
-                    editable={!loading}
-                  />
-                </View>
-
-                <TouchableOpacity
-                  style={[styles.darkButton, loading && styles.buttonDisabled]}
-                  onPress={handleVerifyCode}
-                  disabled={loading}
-                >
-                  {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.darkButtonText}>Verify</Text>}
+                <TouchableOpacity style={styles.socialButton}>
+                  <Text style={styles.socialButtonText}>Continue with Google</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => { setConfirm(null); setCode(''); }} style={styles.linkButton}>
-                  <Text style={styles.linkText}>Change Phone Number</Text>
+                <TouchableOpacity style={styles.whiteButton} onPress={() => switchMethod('email')}>
+                  <Text style={styles.whiteButtonText}>Continue with email</Text>
                 </TouchableOpacity>
-              </>
-            )}
-          </View>
-        )}
 
-        {error ? <Text style={styles.errorText}>{error}</Text> : null}
+                <TouchableOpacity style={styles.whiteButton} onPress={() => switchMethod('phone')}>
+                  <Text style={styles.whiteButtonText}>Continue with Phone</Text>
+                </TouchableOpacity>
+              </View>
 
+              <Text style={styles.disclaimer}>
+                By continuing, you agree to our <Text style={styles.bold}>Terms of Service</Text> and confirm that you've read our <Text style={styles.bold}>Privacy Policy</Text>.
+              </Text>
+            </>
+          )}
+
+          {authMethod === 'email' && (
+            <View style={styles.formContainer}>
+              <Text style={styles.formTitle}>Get started with MobileX.</Text>
+              <Text style={styles.formSubtitle}>You can come back anytime to pick up where you left off.</Text>
+
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Email</Text>
+                <TextInput
+                  style={styles.minimalInput}
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  editable={!loading}
+                />
+              </View>
+
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Password</Text>
+                <TextInput
+                  style={styles.minimalInput}
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                  editable={!loading}
+                />
+              </View>
+
+              <TouchableOpacity
+                style={[styles.darkButton, loading && styles.buttonDisabled]}
+                onPress={handleEmailLogin}
+                disabled={loading}
+              >
+                {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.darkButtonText}>Login</Text>}
+              </TouchableOpacity>
+
+              <Text style={styles.disclaimer}>
+                By continuing, you agree to our <Text style={styles.bold}>Terms of Service</Text> and confirm that you've read our <Text style={styles.bold}>Privacy Policy</Text>.
+              </Text>
+            </View>
+          )}
+
+          {authMethod === 'phone' && (
+            <View style={styles.formContainer}>
+              {!confirm ? (
+                <>
+                  <Text style={styles.formTitle}>Get a temporary PIN to sign in to your account.</Text>
+
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>MobileX phone number</Text>
+                    <TextInput
+                      style={styles.minimalInput}
+                      placeholder="413-555-3854"
+                      placeholderTextColor="#999"
+                      value={phoneNumber}
+                      onChangeText={setPhoneNumber}
+                      keyboardType="phone-pad"
+                      editable={!loading}
+                    />
+                  </View>
+
+                  <TouchableOpacity
+                    style={[styles.darkButton, loading && styles.buttonDisabled]}
+                    onPress={handleSendCode}
+                    disabled={loading}
+                  >
+                    {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.darkButtonText}>Next</Text>}
+                  </TouchableOpacity>
+
+                  <Text style={styles.disclaimer}>
+                    *PINs can only be sent to your MobileX number.
+                  </Text>
+                </>
+              ) : (
+                <>
+                  <Text style={styles.formTitle}>Enter your PIN.</Text>
+                  <Text style={styles.formSubtitle}>Enter the code sent to {phoneNumber}</Text>
+
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Confirmation Code</Text>
+                    <TextInput
+                      style={styles.minimalInput}
+                      placeholder="000000"
+                      placeholderTextColor="#999"
+                      value={code}
+                      onChangeText={setCode}
+                      keyboardType="number-pad"
+                      editable={!loading}
+                    />
+                  </View>
+
+                  <TouchableOpacity
+                    style={[styles.darkButton, loading && styles.buttonDisabled]}
+                    onPress={handleVerifyCode}
+                    disabled={loading}
+                  >
+                    {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.darkButtonText}>Verify</Text>}
+                  </TouchableOpacity>
+
+                  <TouchableOpacity onPress={() => { setConfirm(null); setCode(''); }} style={styles.linkButton}>
+                    <Text style={styles.linkText}>Change Phone Number</Text>
+                  </TouchableOpacity>
+                </>
+              )}
+            </View>
+          )}
+
+          {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+        </View>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  overlayContainer: {
     flex: 1,
+    justifyContent: 'flex-end',
+  },
+  dimmedBackground: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.3)', // Slight dim
+  },
+  bottomSheet: {
     backgroundColor: '#fff',
-  },
-  header: {
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
     paddingHorizontal: 24,
-    paddingVertical: 16,
+    paddingTop: 8,
+    width: '100%',
+    maxHeight: '85%', // Don't take full height
   },
-  backButton: {
-    padding: 8,
+  handleContainer: {
+    alignItems: 'center',
+    paddingVertical: 12,
+    marginBottom: 8,
   },
-  backButtonText: {
-    fontSize: 24,
-    color: '#000',
+  dragHandle: {
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#ddd',
   },
   content: {
-    flex: 1,
-    paddingHorizontal: 24,
+    // No flex: 1 needed here as it will push bottom sheet height naturally
     justifyContent: 'flex-start',
     paddingTop: 20,
   },
+  // ... existing form styles ...
   title: {
     fontSize: 28,
     fontWeight: 'bold',
@@ -302,7 +324,7 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   socialButton: {
-    backgroundColor: '#1a2e26', // Dark Green/Black for social
+    backgroundColor: '#1a2e26',
     paddingVertical: 16,
     borderRadius: 4,
     alignItems: 'center',
