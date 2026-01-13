@@ -12,10 +12,13 @@ import auth from '@react-native-firebase/auth';
 
 interface LoginScreenProps {
   onLoginSuccess?: () => void;
+  onBack?: () => void;
 }
 
-export function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
-  const [mode, setMode] = useState<'email' | 'phone'>('email');
+export function LoginScreen({ onLoginSuccess, onBack }: LoginScreenProps) {
+  const [authMethod, setAuthMethod] = useState<'selection' | 'email' | 'phone'>('selection');
+
+  // Existing state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -25,6 +28,12 @@ export function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
   const [error, setError] = useState('');
   const insets = useSafeAreaInsets();
 
+  // Reset state when switching methods
+  const switchMethod = (method: 'selection' | 'email' | 'phone') => {
+    setError('');
+    setAuthMethod(method);
+  };
+
   const handleEmailLogin = async () => {
     setError('');
     setLoading(true);
@@ -32,12 +41,6 @@ export function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
     try {
       if (!email || !password) {
         setError('Please enter both email and password');
-        return;
-      }
-
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        setError('Please enter a valid email address');
         return;
       }
 
@@ -65,7 +68,6 @@ export function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
         setError('Please enter a valid phone number');
         return;
       }
-      // Phone number validation could be added here
       const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
       setConfirm(confirmation);
     } catch (error: any) {
@@ -89,115 +91,162 @@ export function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
     } catch (error: any) {
       console.error('Verification error:', error);
       setError('Invalid code.');
-      setLoading(false); // Only stop loading on error, success unmounts
+      setLoading(false);
     }
   };
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          paddingTop: insets.top,
-          paddingBottom: insets.bottom,
-          paddingLeft: insets.left,
-          paddingRight: insets.right,
-        },
-      ]}
-    >
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+
+      {/* Header with Back Button */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => {
+          if (authMethod === 'selection') {
+            if (onBack) onBack();
+          } else {
+            switchMethod('selection');
+          }
+        }} style={styles.backButton}>
+          <Text style={styles.backButtonText}>✕</Text>
+        </TouchableOpacity>
+      </View>
+
       <View style={styles.content}>
-        <Text style={styles.title}>Login</Text>
 
-        <View style={styles.tabContainer}>
-          <TouchableOpacity
-            style={[styles.tab, mode === 'email' && styles.activeTab]}
-            onPress={() => { setMode('email'); setError(''); }}
-          >
-            <Text style={[styles.tabText, mode === 'email' && styles.activeTabText]}>Email</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.tab, mode === 'phone' && styles.activeTab]}
-            onPress={() => { setMode('phone'); setError(''); }}
-          >
-            <Text style={[styles.tabText, mode === 'phone' && styles.activeTabText]}>Phone</Text>
-          </TouchableOpacity>
-        </View>
-
-        {mode === 'email' ? (
+        {authMethod === 'selection' && (
           <>
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              placeholderTextColor="#999"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              editable={!loading}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              placeholderTextColor="#999"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              editable={!loading}
-            />
+            <Text style={styles.title}>First, let's set up your MobileX account.</Text>
+            <Text style={styles.subtitle}>You can come back anytime to pick up where you left off.</Text>
+
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.socialButton}>
+                <Text style={styles.socialButtonText}>Continue with Apple</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.socialButton}>
+                <Text style={styles.socialButtonText}>Continue with Google</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.whiteButton} onPress={() => switchMethod('email')}>
+                <Text style={styles.whiteButtonText}>Continue with email</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.whiteButton} onPress={() => switchMethod('phone')}>
+                <Text style={styles.whiteButtonText}>Continue with Phone</Text>
+              </TouchableOpacity>
+            </View>
+
+            <Text style={styles.disclaimer}>
+              By continuing, you agree to our <Text style={styles.bold}>Terms of Service</Text> and confirm that you've read our <Text style={styles.bold}>Privacy Policy</Text>.
+            </Text>
+          </>
+        )}
+
+        {authMethod === 'email' && (
+          <View style={styles.formContainer}>
+            <Text style={styles.formTitle}>Get started with MobileX.</Text>
+            <Text style={styles.formSubtitle}>You can come back anytime to pick up where you left off.</Text>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>Email</Text>
+              <TextInput
+                style={styles.minimalInput}
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                editable={!loading}
+              />
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>Password</Text>
+              <TextInput
+                style={styles.minimalInput}
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                editable={!loading}
+              />
+            </View>
+
             <TouchableOpacity
-              style={[styles.button, loading && styles.buttonDisabled]}
+              style={[styles.darkButton, loading && styles.buttonDisabled]}
               onPress={handleEmailLogin}
               disabled={loading}
             >
-              {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Login</Text>}
+              {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.darkButtonText}>Login</Text>}
             </TouchableOpacity>
-          </>
-        ) : (
-          <>
+
+            <Text style={styles.disclaimer}>
+              By continuing, you agree to our <Text style={styles.bold}>Terms of Service</Text> and confirm that you've read our <Text style={styles.bold}>Privacy Policy</Text>.
+            </Text>
+          </View>
+        )}
+
+        {authMethod === 'phone' && (
+          <View style={styles.formContainer}>
             {!confirm ? (
               <>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Phone Number (e.g. +1 650-555-1234)"
-                  placeholderTextColor="#999"
-                  value={phoneNumber}
-                  onChangeText={setPhoneNumber}
-                  keyboardType="phone-pad"
-                  editable={!loading}
-                />
+                <Text style={styles.formTitle}>Get a temporary PIN to sign in to your account.</Text>
+
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>MobileX phone number</Text>
+                  <TextInput
+                    style={styles.minimalInput}
+                    placeholder="413-555-3854"
+                    placeholderTextColor="#999"
+                    value={phoneNumber}
+                    onChangeText={setPhoneNumber}
+                    keyboardType="phone-pad"
+                    editable={!loading}
+                  />
+                </View>
+
                 <TouchableOpacity
-                  style={[styles.button, loading && styles.buttonDisabled]}
+                  style={[styles.darkButton, loading && styles.buttonDisabled]}
                   onPress={handleSendCode}
                   disabled={loading}
                 >
-                  {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Send Code</Text>}
+                  {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.darkButtonText}>Next</Text>}
                 </TouchableOpacity>
+
+                <Text style={styles.disclaimer}>
+                  *PINs can only be sent to your MobileX number.
+                </Text>
               </>
             ) : (
               <>
-                <Text style={styles.subtitle}>Enter the code sent to {phoneNumber}</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Confirmation Code"
-                  placeholderTextColor="#999"
-                  value={code}
-                  onChangeText={setCode}
-                  keyboardType="number-pad"
-                  editable={!loading}
-                />
+                <Text style={styles.formTitle}>Enter your PIN.</Text>
+                <Text style={styles.formSubtitle}>Enter the code sent to {phoneNumber}</Text>
+
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Confirmation Code</Text>
+                  <TextInput
+                    style={styles.minimalInput}
+                    placeholder="000000"
+                    placeholderTextColor="#999"
+                    value={code}
+                    onChangeText={setCode}
+                    keyboardType="number-pad"
+                    editable={!loading}
+                  />
+                </View>
+
                 <TouchableOpacity
-                  style={[styles.button, loading && styles.buttonDisabled]}
+                  style={[styles.darkButton, loading && styles.buttonDisabled]}
                   onPress={handleVerifyCode}
                   disabled={loading}
                 >
-                  {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Verify Code</Text>}
+                  {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.darkButtonText}>Verify</Text>}
                 </TouchableOpacity>
+
                 <TouchableOpacity onPress={() => { setConfirm(null); setCode(''); }} style={styles.linkButton}>
                   <Text style={styles.linkText}>Change Phone Number</Text>
                 </TouchableOpacity>
               </>
             )}
-          </>
+          </View>
         )}
 
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
@@ -212,62 +261,102 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  header: {
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+  },
+  backButton: {
+    padding: 8,
+  },
+  backButtonText: {
+    fontSize: 24,
+    color: '#000',
+  },
   content: {
     flex: 1,
-    justifyContent: 'center',
     paddingHorizontal: 24,
+    justifyContent: 'flex-start',
+    paddingTop: 20,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 24,
-    textAlign: 'center',
+    marginBottom: 16,
     color: '#000',
+  },
+  sectionTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 24,
+    color: '#000',
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
-    marginBottom: 16,
-    textAlign: 'center',
+    marginBottom: 32,
     color: '#666',
+    lineHeight: 22,
   },
-  tabContainer: {
-    flexDirection: 'row',
-    marginBottom: 24,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 8,
-    padding: 4,
+  buttonContainer: {
+    gap: 12,
+    marginBottom: 32,
   },
-  tab: {
-    flex: 1,
-    paddingVertical: 10,
+  socialButton: {
+    backgroundColor: '#1a2e26', // Dark Green/Black for social
+    paddingVertical: 16,
+    borderRadius: 4,
     alignItems: 'center',
-    borderRadius: 6,
   },
-  activeTab: {
+  socialButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  whiteButton: {
     backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    paddingVertical: 16,
+    borderRadius: 4,
+    alignItems: 'center',
   },
-  tabText: {
-    fontSize: 14,
+  whiteButtonText: {
+    color: '#000',
+    fontSize: 16,
     fontWeight: '600',
-    color: '#666',
   },
-  activeTabText: {
-    color: '#007AFF',
+  greenButton: {
+    backgroundColor: '#00e600',
+    borderRadius: 4,
+    paddingVertical: 16,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  greenButtonText: {
+    color: '#000',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  disclaimer: {
+    fontSize: 12,
+    color: '#888',
+    textAlign: 'center',
+    lineHeight: 18,
+  },
+  bold: {
+    fontWeight: 'bold',
+    color: '#000',
   },
   input: {
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 8,
+    borderRadius: 4,
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 14,
     marginBottom: 16,
     fontSize: 16,
     color: '#000',
+    backgroundColor: '#fff',
   },
   errorText: {
     color: '#d32f2f',
@@ -276,20 +365,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 10,
   },
-  button: {
-    backgroundColor: '#007AFF',
-    borderRadius: 8,
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginTop: 8,
-  },
   buttonDisabled: {
     opacity: 0.6,
   },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
+  helperText: {
+    textAlign: 'center',
+    marginBottom: 16,
+    color: '#666',
   },
   linkButton: {
     marginTop: 16,
@@ -298,5 +380,50 @@ const styles = StyleSheet.create({
   linkText: {
     color: '#007AFF',
     fontSize: 14,
+  },
+  formContainer: {
+    marginTop: 20,
+  },
+  formTitle: {
+    fontSize: 26,
+    fontWeight: '900',
+    color: '#000',
+    marginBottom: 8,
+  },
+  formSubtitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#444',
+    marginBottom: 32,
+    lineHeight: 20,
+  },
+  inputGroup: {
+    marginBottom: 24,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  inputLabel: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 4,
+  },
+  minimalInput: {
+    fontSize: 16,
+    color: '#000',
+    paddingVertical: 8,
+    paddingHorizontal: 0,
+  },
+  darkButton: {
+    backgroundColor: '#0b2e26', // Dark Green almost black
+    borderRadius: 4,
+    paddingVertical: 18,
+    alignItems: 'center',
+    marginTop: 24,
+    marginBottom: 24,
+  },
+  darkButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
