@@ -25,7 +25,7 @@ function App() {
 
 function AppContent() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [showLogin, setShowLogin] = useState(false);
+  const [authMode, setAuthMode] = useState<'login' | 'signup' | null>(null);
 
   if (isAuthenticated) {
     return <UserDashboard onSignOut={() => setIsAuthenticated(false)} />;
@@ -33,12 +33,16 @@ function AppContent() {
 
   return (
     <View style={{ flex: 1 }}>
-      <WelcomeScreen onSignIn={() => setShowLogin(true)} />
-      {showLogin && (
+      <WelcomeScreen
+        onSignIn={() => setAuthMode('login')}
+        onSignUp={() => setAuthMode('signup')}
+      />
+      {authMode && (
         <View style={[StyleSheet.absoluteFill, { zIndex: 1 }]}>
           <LoginScreen
+            mode={authMode}
             onLoginSuccess={() => setIsAuthenticated(true)}
-            onBack={() => setShowLogin(false)}
+            onBack={() => setAuthMode(null)}
           />
         </View>
       )}

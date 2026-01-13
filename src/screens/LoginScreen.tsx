@@ -11,11 +11,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import auth from '@react-native-firebase/auth';
 
 interface LoginScreenProps {
+  mode: 'login' | 'signup';
   onLoginSuccess?: () => void;
   onBack?: () => void;
 }
 
-export function LoginScreen({ onLoginSuccess, onBack }: LoginScreenProps) {
+export function LoginScreen({ mode: initialMode, onLoginSuccess, onBack }: LoginScreenProps) {
   const [authMethod, setAuthMethod] = useState<'selection' | 'email' | 'phone'>('selection');
 
   // Existing state
@@ -34,7 +35,7 @@ export function LoginScreen({ onLoginSuccess, onBack }: LoginScreenProps) {
     setAuthMethod(method);
   };
 
-  const handleEmailLogin = async () => {
+  const handleEmailAction = async () => {
     setError('');
     setLoading(true);
 
@@ -44,16 +45,24 @@ export function LoginScreen({ onLoginSuccess, onBack }: LoginScreenProps) {
         return;
       }
 
-      await auth().signInWithEmailAndPassword(email, password);
+      if (initialMode === 'signup') {
+        await auth().createUserWithEmailAndPassword(email, password);
+      } else {
+        await auth().signInWithEmailAndPassword(email, password);
+      }
+
       if (onLoginSuccess) onLoginSuccess();
     } catch (err: any) {
-      console.error('Login error:', err);
-      if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
-        setError('Invalid email or password');
+      console.error('Auth error:', err);
+      if (err.code === 'auth/email-already-in-use') {
+        setError('That email address is already in use!');
       } else if (err.code === 'auth/invalid-email') {
-        setError('Invalid email address');
+        setError('That email address is invalid!');
+      } else if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+        setError('Invalid email or password');
       } else {
-        setError('Login failed. Please try again.');
+        setError(initialMode === 'signup' ? 'Sign up failed.' : 'Login failed.');
+        if (err.message) setError(err.message);
       }
     } finally {
       setLoading(false);
@@ -112,18 +121,14 @@ export function LoginScreen({ onLoginSuccess, onBack }: LoginScreenProps) {
           <View style={styles.dragHandle} />
         </View>
 
-        {/* Header with Back Button (only show if deeply nested or just rely on drag handle/background to close) */}
-        {/* We can hide the 'X' button since we have the handle and background tap, but let's keep it minimal if needed,
-            or better yet, remove the explicit X header row to match the clean 'half screen' look which implies swipe/tap-out to close.
-        */}
-
         <View style={styles.content}>
 
           {authMethod === 'selection' && (
             <>
-              {/* ... existing selection TSX ... */}
-              <Text style={styles.title}>First, let's set up your MobileX account.</Text>
-              {/* ... */}
+              <Text style={styles.title}>
+                {initialMode === 'signup' ? "Get started with MobileX." : "First, let's set up your MobileX account."}
+              </Text>
+
               <Text style={styles.subtitle}>You can come back anytime to pick up where you left off.</Text>
 
               <View style={styles.buttonContainer}>
@@ -152,7 +157,9 @@ export function LoginScreen({ onLoginSuccess, onBack }: LoginScreenProps) {
 
           {authMethod === 'email' && (
             <View style={styles.formContainer}>
-              <Text style={styles.formTitle}>Get started with MobileX.</Text>
+              <Text style={styles.formTitle}>
+                {initialMode === 'signup' ? "Get started with MobileX." : "Welcome Back."}
+              </Text>
               <Text style={styles.formSubtitle}>You can come back anytime to pick up where you left off.</Text>
 
               <View style={styles.inputGroup}>
@@ -180,10 +187,16 @@ export function LoginScreen({ onLoginSuccess, onBack }: LoginScreenProps) {
 
               <TouchableOpacity
                 style={[styles.darkButton, loading && styles.buttonDisabled]}
-                onPress={handleEmailLogin}
+                onPress={handleEmailAction}
                 disabled={loading}
               >
-                {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.darkButtonText}>Login</Text>}
+                {loading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.darkButtonText}>
+                    {initialMode === 'signup' ? "Create my account" : "Login"}
+                  </Text>
+                )}
               </TouchableOpacity>
 
               <Text style={styles.disclaimer}>

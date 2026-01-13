@@ -4,9 +4,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface WelcomeScreenProps {
     onSignIn: () => void;
+    onSignUp: () => void;
 }
 
-export function WelcomeScreen({ onSignIn }: WelcomeScreenProps) {
+export function WelcomeScreen({ onSignIn, onSignUp }: WelcomeScreenProps) {
     const insets = useSafeAreaInsets();
 
     return (
@@ -40,7 +41,7 @@ export function WelcomeScreen({ onSignIn }: WelcomeScreenProps) {
                     <Text style={styles.greenButtonText}>Let's GO!</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.whiteButton} onPress={onSignIn}>
+                <TouchableOpacity style={styles.whiteButton} onPress={onSignUp}>
                     <Text style={styles.whiteButtonText}>Got our SIM? Get activated</Text>
                 </TouchableOpacity>
             </View>
