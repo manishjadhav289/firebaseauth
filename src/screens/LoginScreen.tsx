@@ -144,9 +144,11 @@ export function LoginScreen({ mode: initialMode, onLoginSuccess, onBack }: Login
                   <Text style={styles.whiteButtonText}>Continue with email</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.whiteButton} onPress={() => switchMethod('phone')}>
-                  <Text style={styles.whiteButtonText}>Continue with Phone</Text>
-                </TouchableOpacity>
+                {initialMode !== 'signup' && (
+                  <TouchableOpacity style={styles.whiteButton} onPress={() => switchMethod('phone')}>
+                    <Text style={styles.whiteButtonText}>Continue with Phone</Text>
+                  </TouchableOpacity>
+                )}
               </View>
 
               <Text style={styles.disclaimer}>
