@@ -80,7 +80,7 @@ android {
 
     namespace "com.firebaseauth"
     defaultConfig {
-        applicationId "com.firebaseauth"
+        applicationId "com.firebaseauth.test2"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

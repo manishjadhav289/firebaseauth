@@ -7,8 +7,10 @@ import {
   Text,
   ActivityIndicator,
 } from 'react-native';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import auth from '@react-native-firebase/auth';
+import { useEffect } from 'react';
 
 interface LoginScreenProps {
   mode: 'login' | 'signup';
@@ -28,6 +30,50 @@ export function LoginScreen({ mode: initialMode, onLoginSuccess, onBack }: Login
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: '54688356800-f1s9t40h5ti7jvo7p8koodq99e74s1rs.apps.googleusercontent.com',
+    });
+  }, []);
+
+  const onGoogleButtonPress = async () => {
+    try {
+      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+
+      const signInResult = await GoogleSignin.signIn();
+
+      // Check if cancelled
+      if (signInResult.type === 'cancelled') {
+        return;
+      }
+
+      const idToken = signInResult.data?.idToken;
+
+      if (!idToken) {
+        throw new Error('No ID token found');
+      }
+
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+      await auth().signInWithCredential(googleCredential);
+
+      if (onLoginSuccess) onLoginSuccess();
+    } catch (error: any) {
+      console.error(error);
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        // user cancelled the login flow
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        // operation (e.g. sign in) is in progress already
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        // play services not available or outdated
+        setError('Google Play Services not available.');
+      } else {
+        // some other error happened
+        setError('Google Sign-In failed.');
+      }
+    }
+  };
 
   // Reset state when switching methods
   const switchMethod = (method: 'selection' | 'email' | 'phone') => {
@@ -136,7 +182,7 @@ export function LoginScreen({ mode: initialMode, onLoginSuccess, onBack }: Login
                   <Text style={styles.socialButtonText}>Continue with Apple</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.socialButton}>
+                <TouchableOpacity style={styles.socialButton} onPress={onGoogleButtonPress}>
                   <Text style={styles.socialButtonText}>Continue with Google</Text>
                 </TouchableOpacity>
 
