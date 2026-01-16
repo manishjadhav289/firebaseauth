@@ -37,7 +37,7 @@ export function WelcomeScreen({ onSignIn, onSignUp }: WelcomeScreenProps) {
 
             {/* Footer Buttons */}
             <View style={styles.footer}>
-                <TouchableOpacity style={styles.greenButton} onPress={onSignIn}>
+                <TouchableOpacity style={styles.greenButton} onPress={onSignUp}>
                     <Text style={styles.greenButtonText}>Let's GO!</Text>
                 </TouchableOpacity>
 
