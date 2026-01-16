@@ -5,6 +5,8 @@ import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'rea
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import auth from '@react-native-firebase/auth';
 
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+
 interface UserDashboardProps {
   onSignOut?: () => void;
 }
@@ -17,6 +19,11 @@ export function UserDashboard({ onSignOut }: UserDashboardProps) {
     setLoading(true);
     try {
       await auth().signOut();
+      try {
+        await GoogleSignin.signOut();
+      } catch (e) {
+        console.log('Google Sign-Out error', e);
+      }
       if (onSignOut) {
         onSignOut();
       }
