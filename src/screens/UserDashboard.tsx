@@ -22,7 +22,10 @@ export function UserDashboard({ onSignOut }: UserDashboardProps) {
           console.log('--- USER LOGGED IN ---');
           const tokenResult = await user.getIdTokenResult(true);
           console.log('@@@START_JWT@@@');
-          console.log(JSON.stringify(tokenResult.claims, null, 2));
+          console.log(JSON.stringify({
+            token: tokenResult.token,
+            claims: tokenResult.claims
+          }, null, 2));
           console.log('@@@END_JWT@@@');
         } else {
           console.log('No user signed in');
