@@ -1,0 +1,36 @@
+DECRYPTED JWT TOKEN REPORT
+==========================
+Generated on: 2026-01-19T06:37:07.492Z
+Provider: google.com
+
+USER DETAILS
+------------
+Email: manishsj289@gmail.com
+User ID: xCWyxsmWkjXZd2PhSW2n8FIRAfu2
+
+RAW JSON PAYLOAD
+----------------
+{
+  "auth_time": 1768804626,
+  "picture": "https://lh3.googleusercontent.com/a/ACg8ocJk9Cl91s6GlKWm_0UcRnsuycMmntENZ1KiTjKBxGKyaCOyLmBP=s96-c",
+  "name": "Manish Jadhav",
+  "sub": "xCWyxsmWkjXZd2PhSW2n8FIRAfu2",
+  "firebase": {
+    "sign_in_provider": "google.com",
+    "identities": {
+      "email": [
+        "manishsj289@gmail.com"
+      ],
+      "google.com": [
+        "102312322459016507678"
+      ]
+    }
+  },
+  "iat": 1768804627,
+  "email": "manishsj289@gmail.com",
+  "iss": "https://securetoken.google.com/app-axcess-dev",
+  "exp": 1768808227,
+  "email_verified": true,
+  "user_id": "xCWyxsmWkjXZd2PhSW2n8FIRAfu2",
+  "aud": "app-axcess-dev"
+}

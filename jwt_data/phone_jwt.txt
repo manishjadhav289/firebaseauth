@@ -1,0 +1,30 @@
+DECRYPTED JWT TOKEN REPORT
+==========================
+Generated on: 2026-01-19T06:36:06.351Z
+Provider: phone
+
+USER DETAILS
+------------
+Phone: +918422081766
+User ID: nhl6XYrFYHe4JMUDV94ctDaL6z92
+
+RAW JSON PAYLOAD
+----------------
+{
+  "auth_time": 1768804502,
+  "sub": "nhl6XYrFYHe4JMUDV94ctDaL6z92",
+  "iss": "https://securetoken.google.com/app-axcess-dev",
+  "iat": 1768804503,
+  "phone_number": "+918422081766",
+  "exp": 1768808103,
+  "user_id": "nhl6XYrFYHe4JMUDV94ctDaL6z92",
+  "aud": "app-axcess-dev",
+  "firebase": {
+    "sign_in_provider": "phone",
+    "identities": {
+      "phone": [
+        "+918422081766"
+      ]
+    }
+  }
+}

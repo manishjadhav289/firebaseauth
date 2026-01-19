@@ -1,0 +1,70 @@
+JWT TOKEN PARAMETERS EXPLAINED
+==============================
+
+I. STANDARD JWT FIELDS
+These are standard fields used by systems worldwide to ensure security.
+
+1. "iss" (Issuer)
+   - Meaning: Who created this token?
+   - Value: Always "https://securetoken.google.com/<project-id>"
+   - Purpose: Your backend must verify this matches your Firebase project ID to prove the token shouldn't be valid for a different system.
+
+2. "aud" (Audience)
+   - Meaning: Who is this token intended for?
+   - Value: Your Firebase Project ID (e.g., "app-axcess-dev")
+   - Purpose: Prevents a token generated for a different app (even by the same user) from being used on your server.
+
+3. "sub" (Subject)
+   - Meaning: Who is the user?
+   - Value: The unique User ID (UID). Identical to "user_id".
+   - Purpose: This is the primary key (ID) for the user in your database. It never changes for that user account.
+
+4. "iat" (Issued At)
+   - Meaning: When was this token created?
+   - Value: Unix timestamp (seconds since 1970).
+   - Purpose: Used to calculate the age of the token.
+
+5. "exp" (Expiration)
+   - Meaning: When does this token expire?
+   - Value: Unix timestamp (seconds since 1970).
+   - Purpose: Firebase Access Tokens live for exactly 1 hour. After this time, the token is invalid and any backend request using it will be rejected.
+
+6. "auth_time" (Auth Time)
+   - Meaning: When did the user actually log in?
+   - Value: Unix timestamp.
+   - Purpose: This might differ from "iat" (issued at). If a token is automatically refreshed, "iat" updates, but "auth_time" stays the same. You can use this to force a user to re-enter their password for sensitive actions (e.g., "You logged in 30 days ago, please verify password").
+
+
+II. USER PROFILE FIELDS
+These fields describe the user's specific information.
+
+1. "email"
+   - Meaning: The user's email address.
+
+2. "email_verified"
+   - Meaning: Boolean (true/false).
+   - Purpose: CRITICAL for security. If "false", the user has not clicked the verification link sent to their email. You should often block sensitive app features until this is "true".
+
+3. "phone_number" (Phone Auth only)
+   - Meaning: The verified phone number of the user in E.164 format (e.g., +91...).
+
+4. "name" (Google/Facebook only)
+   - Meaning: The user's full display name pulled from their public profile.
+
+5. "picture" (Google/Facebook only)
+   - Meaning: A URL to the user's public profile photo.
+
+
+III. FIREBASE SPECIFIC FIELDS
+Contained inside the "firebase" object.
+
+1. "sign_in_provider"
+   - Meaning: How the user logged in *this specific time*.
+   - Common Values:
+     - "password" (Email/Password)
+     - "phone" (Phone Number)
+     - "google.com" (Google Sign-In)
+
+2. "identities"
+   - Meaning: A list of all account types linked to this User ID.
+   - Purpose: A single user can have multiple identities linked to one account (e.g., they linked their Google Account AND their Phone Number to the same UID).

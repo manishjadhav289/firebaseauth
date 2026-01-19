@@ -1,0 +1,42 @@
+
+DECRYPTED JWT TOKEN REPORT
+==========================
+Generated on: 2026-01-19
+Project: app-axcess-dev
+
+USER DETAILS
+------------
+Email: manish28jadhav@gmail.com
+User ID: IDPzh8SWQJcrra6Ls6Gybq9OsNB3
+Email Verified: true
+
+TOKEN METADATA
+--------------
+Issued By (iss): https://securetoken.google.com/app-axcess-dev
+Audience (aud): app-axcess-dev
+Sign In Provider: password
+Issued At (iat): 1768804081
+Expiration (exp): 1768807681
+Auth Time: 1768804079
+
+RAW JSON PAYLOAD
+----------------
+{
+  "user_id": "IDPzh8SWQJcrra6Ls6Gybq9OsNB3",
+  "email": "manish28jadhav@gmail.com",
+  "email_verified": true,
+  "aud": "app-axcess-dev",
+  "iss": "https://securetoken.google.com/app-axcess-dev",
+  "exp": 1768807681,
+  "iat": 1768804081,
+  "auth_time": 1768804079,
+  "sub": "IDPzh8SWQJcrra6Ls6Gybq9OsNB3",
+  "firebase": {
+    "sign_in_provider": "password",
+    "identities": {
+      "email": [
+        "manish28jadhav@gmail.com"
+      ]
+    }
+  }
+}

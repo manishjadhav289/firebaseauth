@@ -1,10 +1,8 @@
 
-
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import auth from '@react-native-firebase/auth';
-
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 interface UserDashboardProps {
@@ -14,6 +12,28 @@ interface UserDashboardProps {
 export function UserDashboard({ onSignOut }: UserDashboardProps) {
   const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState(false);
+
+  // LOG TOKEN ON MOUNT
+  React.useEffect(() => {
+    const logTokenInfo = async () => {
+      try {
+        const user = auth().currentUser;
+        if (user) {
+          console.log('--- USER LOGGED IN ---');
+          const tokenResult = await user.getIdTokenResult(true);
+          console.log('@@@START_JWT@@@');
+          console.log(JSON.stringify(tokenResult.claims, null, 2));
+          console.log('@@@END_JWT@@@');
+        } else {
+          console.log('No user signed in');
+        }
+      } catch (e) {
+        console.error('Failed to log token info:', e);
+      }
+    };
+
+    logTokenInfo();
+  }, []);
 
   const handleSignOut = async () => {
     setLoading(true);
