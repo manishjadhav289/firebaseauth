@@ -1,62 +1,41 @@
 {
   "project_info": {
-    "project_number": "54688356800",
-    "project_id": "sample-10232",
-    "storage_bucket": "sample-10232.firebasestorage.app"
+    "project_number": "26055029207",
+    "project_id": "app-axcess-dev",
+    "storage_bucket": "app-axcess-dev.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:54688356800:android:c657d81990e6a0444c5025",
+        "mobilesdk_app_id": "1:26055029207:android:238da0ed05e648986fdb92",
         "android_client_info": {
-          "package_name": "com.firebaseauth"
+          "package_name": "com.firebaseauth.test"
         }
       },
       "oauth_client": [
         {
-          "client_id": "54688356800-f1s9t40h5ti7jvo7p8koodq99e74s1rs.apps.googleusercontent.com",
+          "client_id": "26055029207-cvq6ds1400s51t4d90siipcqa1g5687t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.firebaseauth.test",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "26055029207-9vq8sd5nlcloda0o1p06pskdq68h38at.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDkEVX6crAs-vUywPidsMVgx8XBEAAN-V4"
+          "current_key": "AIzaSyCyOqlVyf_hrFaVqryRsuzDgHN7As9wFjg"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "54688356800-f1s9t40h5ti7jvo7p8koodq99e74s1rs.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:54688356800:android:8c334a8ea3cd9cbc4c5025",
-        "android_client_info": {
-          "package_name": "com.firebaseauth.test2"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "54688356800-f1s9t40h5ti7jvo7p8koodq99e74s1rs.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDkEVX6crAs-vUywPidsMVgx8XBEAAN-V4"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "54688356800-f1s9t40h5ti7jvo7p8koodq99e74s1rs.apps.googleusercontent.com",
+              "client_id": "26055029207-9vq8sd5nlcloda0o1p06pskdq68h38at.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

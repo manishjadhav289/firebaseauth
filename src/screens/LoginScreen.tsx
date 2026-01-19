@@ -36,7 +36,7 @@ export function LoginScreen({ mode: initialMode, onLoginSuccess, onBack }: Login
 
   useEffect(() => {
     GoogleSignin.configure({
-      webClientId: '54688356800-f1s9t40h5ti7jvo7p8koodq99e74s1rs.apps.googleusercontent.com',
+      webClientId: '26055029207-9vq8sd5nlcloda0o1p06pskdq68h38at.apps.googleusercontent.com',
     });
   }, []);
 
