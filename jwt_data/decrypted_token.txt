@@ -1,36 +1,31 @@
 DECRYPTED JWT TOKEN REPORT
 ==========================
-Generated on: 2026-01-19T07:10:09.356Z
-Provider: google.com
+Generated on: 2026-01-19T08:46:57.117Z
+Provider: password
 
 USER DETAILS
 ------------
-Email: manishsj289@gmail.com
-User ID: xCWyxsmWkjXZd2PhSW2n8FIRAfu2
+Email: latesh.gajeshwar@algoworks.com
+User ID: MDDihzOl3qNKImF6e8Vs2s2xATA2
 
 RAW JSON PAYLOAD
 ----------------
 {
-  "auth_time": 1768804626,
-  "picture": "https://lh3.googleusercontent.com/a/ACg8ocJk9Cl91s6GlKWm_0UcRnsuycMmntENZ1KiTjKBxGKyaCOyLmBP=s96-c",
-  "name": "Manish Jadhav",
-  "sub": "xCWyxsmWkjXZd2PhSW2n8FIRAfu2",
+  "auth_time": 1768812415,
+  "sub": "MDDihzOl3qNKImF6e8Vs2s2xATA2",
+  "email": "latesh.gajeshwar@algoworks.com",
+  "iss": "https://securetoken.google.com/app-axcess-dev",
+  "exp": 1768816017,
+  "iat": 1768812417,
+  "email_verified": false,
+  "user_id": "MDDihzOl3qNKImF6e8Vs2s2xATA2",
+  "aud": "app-axcess-dev",
   "firebase": {
-    "sign_in_provider": "google.com",
+    "sign_in_provider": "password",
     "identities": {
       "email": [
-        "manishsj289@gmail.com"
-      ],
-      "google.com": [
-        "102312322459016507678"
+        "latesh.gajeshwar@algoworks.com"
       ]
     }
-  },
-  "iat": 1768806609,
-  "email": "manishsj289@gmail.com",
-  "iss": "https://securetoken.google.com/app-axcess-dev",
-  "exp": 1768810209,
-  "email_verified": true,
-  "user_id": "xCWyxsmWkjXZd2PhSW2n8FIRAfu2",
-  "aud": "app-axcess-dev"
+  }
 }
