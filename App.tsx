@@ -11,6 +11,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { LoginScreen } from './src/screens/LoginScreen';
 import { UserDashboard } from './src/screens/UserDashboard';
 import { WelcomeScreen } from './src/screens/WelcomeScreen';
+import { VerificationPendingScreen } from './src/screens/VerificationPendingScreen';
 
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { ActivityIndicator } from 'react-native';
@@ -28,15 +29,56 @@ function AppContent() {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
   const [authMode, setAuthMode] = useState<'login' | 'signup' | null>(null);
+  const [isVerified, setIsVerified] = useState(false);
 
   // Handle user state changes
   React.useEffect(() => {
     const subscriber = auth().onAuthStateChanged(userState => {
       setUser(userState);
+      if (userState) {
+        setIsVerified(userState.emailVerified);
+      } else {
+        setIsVerified(false);
+      }
       if (initializing) setInitializing(false);
     });
     return subscriber; // unsubscribe on unmount
   }, [initializing]);
+
+  // AUTO-POLL VERIFICATION STATUS
+  React.useEffect(() => {
+    let interval: ReturnType<typeof setInterval> | null = null;
+
+    if (user && !isVerified) {
+      console.log('--- STARTING VERIFICATION POLL ---');
+      interval = setInterval(async () => {
+        try {
+          const u = auth().currentUser;
+          if (u) {
+            await u.reload();
+            await u.getIdToken(true); // Force token refresh
+            const updatedUser = auth().currentUser;
+            console.log('App Poll - Verified:', updatedUser?.emailVerified);
+
+            if (updatedUser?.emailVerified) {
+              console.log('✅ VERIFICATION DETECTED');
+              setIsVerified(true);
+              setUser(updatedUser);
+            }
+          }
+        } catch (e) {
+          console.error('App Poll Error:', e);
+        }
+      }, 3000);
+    }
+
+    return () => {
+      if (interval) {
+        console.log('--- STOPPING VERIFICATION POLL ---');
+        clearInterval(interval);
+      }
+    };
+  }, [user, isVerified]);
 
   if (initializing) {
     return (
@@ -47,6 +89,12 @@ function AppContent() {
   }
 
   if (user) {
+    // BLOCK ACCESS TO DASHBOARD IF EMAIL IS NOT VERIFIED
+    const isEmailProvider = user.providerData.some(p => p.providerId === 'password');
+    if (isEmailProvider && !isVerified) {
+      return <VerificationPendingScreen />;
+    }
+
     return <UserDashboard onSignOut={() => setUser(null)} />;
   }
 

@@ -12,6 +12,7 @@ interface UserDashboardProps {
 export function UserDashboard({ onSignOut }: UserDashboardProps) {
   const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState(false);
+  const user = auth().currentUser;
 
   // LOG TOKEN ON MOUNT
   React.useEffect(() => {
@@ -71,17 +72,18 @@ export function UserDashboard({ onSignOut }: UserDashboardProps) {
     >
       <View style={styles.content}>
         <Text style={styles.title}>Welcome</Text>
-        <Text style={styles.subtitle}>You are signed in.</Text>
+        <Text style={styles.subtitle}>{user?.email || user?.phoneNumber || 'User'}</Text>
+        <Text style={styles.statusText}>You are signed in and verified.</Text>
 
         <TouchableOpacity
-          style={[styles.button, loading && styles.buttonDisabled]}
+          style={[styles.signOutButton, loading && styles.buttonDisabled]}
           onPress={handleSignOut}
           disabled={loading}
         >
           {loading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.buttonText}>Sign Out</Text>
+            <Text style={styles.signOutButtonText}>Sign Out</Text>
           )}
         </TouchableOpacity>
       </View>
@@ -109,20 +111,26 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     color: '#444',
-    marginBottom: 24,
+    marginBottom: 16,
   },
-  button: {
+  statusText: {
+    fontSize: 14,
+    color: '#4caf50', // Green
+    fontWeight: '600',
+    marginBottom: 40,
+  },
+  signOutButton: {
     backgroundColor: '#d32f2f',
     borderRadius: 8,
     paddingVertical: 12,
-    paddingHorizontal: 20,
+    paddingHorizontal: 24,
   },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
+  signOutButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+  },
+  buttonDisabled: {
+    opacity: 0.6,
   },
 });

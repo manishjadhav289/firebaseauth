@@ -95,7 +95,12 @@ export function LoginScreen({ mode: initialMode, onLoginSuccess, onBack }: Login
       }
 
       if (initialMode === 'signup') {
-        await auth().createUserWithEmailAndPassword(email, password);
+        const userCredential = await auth().createUserWithEmailAndPassword(email, password);
+        await userCredential.user.sendEmailVerification();
+        Alert.alert(
+          'Check your email',
+          `A verification link has been sent to ${email}.`
+        );
       } else {
         await auth().signInWithEmailAndPassword(email, password);
       }
