@@ -76,3 +76,6 @@ yarn-error.log
 
 # JWT Data
 jwt_data/decrypted_token.txt
+
+# Environment Variables
+.env

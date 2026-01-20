@@ -4,7 +4,25 @@ const path = require('path');
 
 const OUTPUT_DIR = path.join(__dirname, 'jwt_data');
 const OUTPUT_FILE = path.join(OUTPUT_DIR, 'decrypted_token.txt');
-const API_KEY = 'AIzaSyCyOqlVyf_hrFaVqryRsuzDgHN7As9wFjg'; // Extracted from google-services.json
+
+// Helper to read .env without dependencies
+function getApiKeyFromEnv() {
+    try {
+        const envPath = path.join(__dirname, '.env');
+        const envContent = fs.readFileSync(envPath, 'utf8');
+        const match = envContent.match(/FIREBASE_API_KEY=(.*)/);
+        return match ? match[1].trim() : null;
+    } catch (e) {
+        return null;
+    }
+}
+
+const API_KEY = getApiKeyFromEnv();
+
+if (!API_KEY) {
+    console.error('ERROR: FIREBASE_API_KEY not found in .env file!');
+    process.exit(1);
+}
 
 // Ensure output directory exists
 if (!fs.existsSync(OUTPUT_DIR)) {
