@@ -16,7 +16,10 @@ export function WelcomeScreen({ onSignIn, onSignUp }: WelcomeScreenProps) {
 
             {/* Header */}
             <View style={styles.header}>
-                <Text style={styles.brand}>mobileX</Text>
+                <View style={styles.brandContainer}>
+                    <Text style={styles.brandMobile}>mobile</Text>
+                    <Text style={styles.brandX}>X</Text>
+                </View>
                 <TouchableOpacity onPress={onSignIn} style={styles.signInButton}>
                     <Text style={styles.signInText}>SIGN IN</Text>
                 </TouchableOpacity>
@@ -24,7 +27,7 @@ export function WelcomeScreen({ onSignIn, onSignUp }: WelcomeScreenProps) {
 
             {/* Main Content */}
             <View style={styles.content}>
-                <Text style={styles.heroText}>MOBILE.</Text>
+                <Text style={[styles.heroText, styles.heroTextGreen]}>MOBILE.</Text>
                 <Text style={styles.heroText}>DONE</Text>
                 <Text style={styles.heroText}>DIFFERENT.</Text>
 
@@ -60,13 +63,27 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingVertical: 16,
+        marginTop: 8,
     },
-    brand: {
-        fontSize: 24,
+    brandContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    brandMobile: {
+        fontSize: 32,
         fontWeight: '900',
         color: '#fff',
         letterSpacing: -1,
         fontFamily: 'Gilroy-Heavy',
+    },
+    brandX: {
+        fontSize: 32,
+        fontWeight: '900',
+        color: '#00e600',
+        letterSpacing: -1,
+        fontStyle: 'italic',
+        fontFamily: 'Gilroy-Heavy',
+        marginLeft: 0,
     },
     signInButton: {
         backgroundColor: 'rgba(255,255,255,0.1)',
@@ -77,36 +94,39 @@ const styles = StyleSheet.create({
     signInText: {
         color: '#fff',
         fontWeight: '600',
-        fontSize: 14,
-        fontFamily: 'Gilroy-Medium',
+        fontSize: 12, // Smaller as in image
+        fontFamily: 'Gilroy-Bold',
+        letterSpacing: 0.5,
     },
     content: {
         flex: 1,
         justifyContent: 'center',
+        paddingRight: 20, // Add some right padding to prevent text hitting edge too hard
     },
     heroText: {
-        fontSize: 48,
+        fontSize: 56, // Larger
         fontWeight: '900',
-        color: '#fff', // Or slightly transparent white if needed
-        lineHeight: 48,
+        color: '#fff',
+        lineHeight: 56 * 0.9, // Tight line height
         textTransform: 'uppercase',
         fontFamily: 'Gilroy-Heavy',
     },
     heroTextGreen: {
-        color: '#00ff00', // Neon green accent if needed
+        color: '#00e600',
     },
     subHeader: {
         color: '#fff',
         fontSize: 18,
-        marginTop: 24,
+        marginTop: 32,
         marginBottom: 8,
-        fontFamily: 'Gilroy-Medium',
+        fontFamily: 'Gilroy-Bold',
     },
     bodyText: {
-        color: '#aaa',
-        fontSize: 16,
-        lineHeight: 24,
+        color: '#e0e0e0',
+        fontSize: 18,
+        lineHeight: 26,
         fontFamily: 'Gilroy-Regular',
+        maxWidth: '90%',
     },
     boldWhite: {
         color: '#fff',
@@ -114,20 +134,21 @@ const styles = StyleSheet.create({
         fontFamily: 'Gilroy-Bold',
     },
     footer: {
-        paddingBottom: 32,
-        gap: 16,
+        paddingBottom: 40,
+        gap: 12,
     },
     greenButton: {
-        backgroundColor: '#00e600', // Bright Green
+        backgroundColor: '#00e600',
         paddingVertical: 16,
         borderRadius: 4,
         alignItems: 'center',
     },
     greenButtonText: {
         color: '#000',
-        fontWeight: 'bold',
-        fontSize: 18,
+        fontWeight: '800', // Heavier weight
+        fontSize: 16,
         fontFamily: 'Gilroy-Bold',
+        letterSpacing: 0.5,
     },
     whiteButton: {
         backgroundColor: '#fff',
@@ -137,8 +158,9 @@ const styles = StyleSheet.create({
     },
     whiteButtonText: {
         color: '#000',
-        fontWeight: 'bold',
+        fontWeight: '800', // Heavier weight
         fontSize: 16,
         fontFamily: 'Gilroy-Bold',
+        letterSpacing: 0.5,
     },
 });

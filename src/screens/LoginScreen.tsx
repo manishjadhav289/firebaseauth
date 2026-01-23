@@ -159,7 +159,8 @@ export function LoginScreen({ mode: initialMode, onLoginSuccess, onBack, onShowT
     }
   };
 
-  const handleForgotPassword = async () => {
+  // Handle Magic Link (Passwordless)
+  const handleMagicLink = async () => {
     setError('');
     setLoading(true);
     try {
@@ -167,21 +168,62 @@ export function LoginScreen({ mode: initialMode, onLoginSuccess, onBack, onShowT
         setError('Please enter your email address');
         return;
       }
-      await auth().sendPasswordResetEmail(email);
-      setResetSent(true);
+      
+      const actionCodeSettings = {
+        // Build the link. This URL needs to be whitelisted in Firebase Console -> Authentication -> Settings -> Authorized domains
+        // And also handled in the app for deep linking (not fully implemented here, just the sending part)
+        url: 'https://app-axcess-dev.firebaseapp.com/finishSignUp?cartId=1234', 
+        handleCodeInApp: true,
+        iOS: {
+          bundleId: 'com.firebaseauth.test',
+        },
+        android: {
+          packageName: 'com.firebaseauth.test',
+          installApp: true,
+          minimumVersion: '12',
+        },
+      };
+
+      await auth().sendSignInLinkToEmail(email, actionCodeSettings);
+      
+      // Save email locally to verify when user returns via link (optional but recommended flow)
+      // AsyncStorage.setItem('emailForSignIn', email); 
+      
+      Alert.alert(
+        'Check your email',
+        `A sign-in link has been sent to ${email}. Click it to sign in.`
+      );
     } catch (error: any) {
-      console.error('Forgot Password error:', error);
-      if (error.code === 'auth/user-not-found') {
-        // Show explicit warning modal as requested
-        Alert.alert('User Not Found', 'No user found with this email address.');
-      } else if (error.code === 'auth/invalid-email') {
-        setError('Invalid email address.');
-      } else {
-        setError('Failed to send reset email.');
-      }
+      console.error('Magic Link error:', error);
+      setError('Failed to send magic link. ' + error.message);
     } finally {
       setLoading(false);
     }
+  };
+
+  // Handle Legacy Password Reset
+  const handleResetPassword = async () => {
+     setError('');
+     setLoading(true);
+     try {
+       if (!email) {
+         setError('Please enter your email address to reset password');
+         return;
+       }
+       await auth().sendPasswordResetEmail(email);
+       setResetSent(true);
+     } catch (error: any) {
+       console.error('Forgot Password error:', error);
+       if (error.code === 'auth/user-not-found') {
+          Alert.alert('User Not Found', 'No user found with this email address.');
+       } else if (error.code === 'auth/invalid-email') {
+         setError('Invalid email address.');
+       } else {
+         setError('Failed to send reset email.');
+       }
+     } finally {
+       setLoading(false);
+     }
   };
 
   return (
@@ -200,12 +242,14 @@ export function LoginScreen({ mode: initialMode, onLoginSuccess, onBack, onShowT
         />
 
         <View style={[styles.bottomSheet, { paddingBottom: insets.bottom + 20 }]}>
-          {/* Drag Handle Icon */}
-          <View style={styles.handleContainer}>
-            <View style={styles.dragHandle} />
-          </View>
+          {/* Drag Handle Icon - Hide in forgotPassword mode as per design, keeping consistent padding though */}
+          {authMethod !== 'forgotPassword' && (
+             <View style={styles.handleContainer}>
+                <View style={styles.dragHandle} />
+             </View>
+          )}
 
-          <View style={styles.content}>
+          <View style={[styles.content, authMethod === 'forgotPassword' && { paddingTop: 0 }]}>
 
             {authMethod === 'selection' && (
               <>
@@ -374,46 +418,67 @@ export function LoginScreen({ mode: initialMode, onLoginSuccess, onBack, onShowT
             )}
 
             {authMethod === 'forgotPassword' && (
-              <View style={styles.formContainer}>
-                <Text style={styles.formTitle}>Forgot your password?</Text>
-                <Text style={styles.formSubtitle}>
-                  We'll send you a magic link to your email that you can use for a one-time to sign in.
-                </Text>
+              <View>
+                 {/* Custom Header for Magic Link flow */}
+                 <View style={styles.forgetHeader}>
+                    <TouchableOpacity onPress={() => switchMethod('selection')}>
+                         <View style={styles.closeIconCircle}>
+                            <Text style={styles.closeIconText}>✕</Text>
+                         </View>
+                    </TouchableOpacity>
+                    <Text style={styles.logoText}>X</Text>
+                 </View>
 
-                <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>Email</Text>
-                  <TextInput
-                    style={styles.minimalInput}
-                    value={email}
-                    onChangeText={setEmail}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    editable={!loading}
-                    autoComplete="off"
-                    autoCorrect={false}
-                    textContentType="none"
-                  />
-                </View>
+                <View style={styles.formContainer}>
+                    <Text style={styles.formTitle}>Forgot your password?</Text>
+                    <Text style={styles.formSubtitle}>
+                    We'll send you a magic link to your email that you can use for a one-time to sign in.
+                    </Text>
 
-                <TouchableOpacity
-                  style={[styles.darkButton, loading && styles.buttonDisabled]}
-                  onPress={handleForgotPassword}
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <ActivityIndicator color="#fff" />
-                  ) : (
-                    <Text style={styles.darkButtonText}>Send magic link</Text>
-                  )}
-                </TouchableOpacity>
+                    <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Email</Text>
+                    <TextInput
+                        style={styles.minimalInput}
+                        value={email}
+                        onChangeText={setEmail}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                        editable={!loading}
+                        autoComplete="off"
+                        autoCorrect={false}
+                        textContentType="none"
+                    />
+                    </View>
 
-                <View style={{ marginTop: 20 }}>
-                  <Text style={[styles.disclaimer, { textAlign: 'left' }]}>
-                    Not your first time forgetting?
-                  </Text>
-                  <TouchableOpacity onPress={() => switchMethod('email')}>
-                    <Text style={[styles.bold, { fontSize: 13, marginTop: 4 }]}>Reset your password.</Text>
-                  </TouchableOpacity>
+                    <TouchableOpacity
+                    style={[styles.darkButton, loading && styles.buttonDisabled]}
+                    onPress={handleMagicLink}
+                    disabled={loading}
+                    >
+                    {loading ? (
+                        <ActivityIndicator color="#fff" />
+                    ) : (
+                        <Text style={styles.darkButtonText}>Send magic link</Text>
+                    )}
+                    </TouchableOpacity>
+
+                    <View style={{ marginTop: 20 }}>
+                     <Text style={[styles.disclaimer, { textAlign: 'left' }]}>
+                        Not your first time forgetting?
+                     </Text>
+                     <TouchableOpacity onPress={handleResetPassword}>
+                        <Text style={[styles.bold, { fontSize: 13, marginTop: 4 }]}>Reset your password.</Text>
+                     </TouchableOpacity>
+                    </View>
+                    
+                     <View style={{ marginTop: 40 }}>
+                         <Text style={styles.disclaimer}>
+                           By continuing, you agree to our{' '}
+                           <Text style={styles.bold} onPress={() => onShowTerms && onShowTerms('terms')}>Terms of Service</Text>
+                           {' '}and confirm that you've read our{' '}
+                           <Text style={styles.bold} onPress={() => onShowTerms && onShowTerms('privacy')}>Privacy Policy</Text>.
+                         </Text>
+                    </View>
                 </View>
               </View>
             )}
@@ -423,7 +488,7 @@ export function LoginScreen({ mode: initialMode, onLoginSuccess, onBack, onShowT
         </View>
       </View>
 
-      {/* Success Overlay */}
+      {/* Success Overlay - Keep for Reset Password success */}
       {resetSent && (
         <View style={StyleSheet.absoluteFill}>
           <View style={{ flex: 1, backgroundColor: '#1a2e26', justifyContent: 'center', alignItems: 'center', padding: 24 }}>
@@ -645,5 +710,28 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     fontFamily: 'Gilroy-Bold',
+  },
+  forgetHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 20,
+  },
+  closeIconCircle: {
+      // Simple text X for now, matching the style
+      padding: 4,
+  },
+  closeIconText: {
+      fontSize: 24,
+      color: '#000',
+      lineHeight: 24,
+      fontFamily: 'Gilroy-Regular',
+  },
+  logoText: {
+      fontSize: 28,
+      fontWeight: '900',
+      color: '#00e600', 
+      fontStyle: 'italic',
+      fontFamily: 'Gilroy-Bold',
   },
 });
