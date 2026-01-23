@@ -18,7 +18,7 @@ interface LoginScreenProps {
   mode: 'login' | 'signup';
   onLoginSuccess?: () => void;
   onBack?: () => void;
-  onShowTerms?: () => void;
+  onShowTerms?: (tab?: 'terms' | 'privacy') => void;
 }
 
 export function LoginScreen({ mode: initialMode, onLoginSuccess, onBack, onShowTerms }: LoginScreenProps) {
@@ -239,9 +239,9 @@ export function LoginScreen({ mode: initialMode, onLoginSuccess, onBack, onShowT
 
                 <Text style={styles.disclaimer}>
                   By continuing, you agree to our{' '}
-                  <Text style={styles.bold} onPress={onShowTerms}>Terms of Service</Text>
+                  <Text style={styles.bold} onPress={() => onShowTerms && onShowTerms('terms')}>Terms of Service</Text>
                   {' '}and confirm that you've read our{' '}
-                  <Text style={styles.bold}>Privacy Policy</Text>.
+                  <Text style={styles.bold} onPress={() => onShowTerms && onShowTerms('privacy')}>Privacy Policy</Text>.
                 </Text>
 
                 {initialMode === 'login' && (
@@ -301,9 +301,9 @@ export function LoginScreen({ mode: initialMode, onLoginSuccess, onBack, onShowT
 
                 <Text style={styles.disclaimer}>
                   By continuing, you agree to our{' '}
-                  <Text style={styles.bold} onPress={onShowTerms}>Terms of Service</Text>
+                  <Text style={styles.bold} onPress={() => onShowTerms && onShowTerms('terms')}>Terms of Service</Text>
                   {' '}and confirm that you've read our{' '}
-                  <Text style={styles.bold}>Privacy Policy</Text>.
+                  <Text style={styles.bold} onPress={() => onShowTerms && onShowTerms('privacy')}>Privacy Policy</Text>.
                 </Text>
               </View>
             )}

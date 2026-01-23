@@ -6,9 +6,9 @@ import {
   ActivityIndicator,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
   Linking
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { contentfulService } from '../services/contentful';
 
 // --- HELPER FUNCTIONS (Moved outside component) ---
@@ -57,45 +57,55 @@ const renderNode = (node: any, index: number) => {
 
 // --- COMPONENT ---
 
+// --- CONSTANTS ---
+const TERMS_ENTRY_ID = 'N7HdmJVPIvzOmSfrdk4Sn';
+const PRIVACY_ENTRY_ID = '1Gcqs96s9QXRj0HyjmcXrp';
+
 interface TermsScreenProps {
   onClose: () => void;
+  initialTab?: 'terms' | 'privacy';
 }
 
 export const TermsScreen: React.FC<TermsScreenProps> = (props) => {
-  // Destructure props mainly to be explicit, though props.onClose is fine
-  const { onClose } = props;
+  const { onClose, initialTab } = props;
+  const insets = useSafeAreaInsets();
 
-  // Hooks must be at the top level
   const [loading, setLoading] = useState(true);
   const [content, setContent] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'terms' | 'privacy'>('terms');
+  const [activeTab, setActiveTab] = useState<'terms' | 'privacy'>(initialTab || 'terms');
 
   useEffect(() => {
     let isMounted = true;
     
-    const fetchTerms = async () => {
+    // Reset state when tab changes
+    setLoading(true);
+    setContent(null);
+    setError(null);
+
+    const fetchContent = async () => {
       try {
-        // Hardcoded Entry ID as requested
-        const entry = await contentfulService.getEntry('N7HdmJVPIvzOmSfrdk4Sn');
+        const entryId = activeTab === 'terms' ? TERMS_ENTRY_ID : PRIVACY_ENTRY_ID;
+        const entry = await contentfulService.getEntry(entryId);
+        
         if (isMounted) {
           setContent(entry);
           setLoading(false);
         }
       } catch (err) {
         if (isMounted) {
-          setError('Failed to load content.');
+          setError(`Failed to load ${activeTab === 'terms' ? 'Terms' : 'Privacy Policy'}.`);
           setLoading(false);
         }
       }
     };
 
-    fetchTerms();
+    fetchContent();
 
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [activeTab]); // Re-run when activeTab changes
 
   const renderContent = () => {
     if (!content) return null;
@@ -135,8 +145,7 @@ export const TermsScreen: React.FC<TermsScreenProps> = (props) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
         
         {/* HEADER */}
         <View style={styles.header}>
@@ -184,13 +193,16 @@ export const TermsScreen: React.FC<TermsScreenProps> = (props) => {
         ) : error ? (
           <View style={styles.center}>
             <Text style={styles.errorText}>{error}</Text>
-            <TouchableOpacity onPress={onClose} style={styles.retryButton}>
-                <Text style={styles.retryText}>Return</Text>
+            <TouchableOpacity onPress={() => setActiveTab(activeTab)} style={styles.retryButton}>
+                <Text style={styles.retryText}>Retry</Text>
             </TouchableOpacity>
           </View>
         ) : (
           <ScrollView contentContainerStyle={styles.scrollContent}>
-              <Text style={styles.staticContentTitle}>General Terms & Conditions of Service</Text>
+               {/* Dynamic Title */}
+              <Text style={styles.staticContentTitle}>
+                  {activeTab === 'terms' ? 'General Terms & Conditions of Service' : 'Privacy Policy'}
+              </Text>
               {renderContent()}
           </ScrollView>
         )}
@@ -202,7 +214,7 @@ export const TermsScreen: React.FC<TermsScreenProps> = (props) => {
             </TouchableOpacity>
         </View>
       </View>
-    </SafeAreaView>
+
   );
 };
 
@@ -285,12 +297,12 @@ const styles = StyleSheet.create({
   },
   activeTabLine: {
       position: 'absolute',
-      bottom: 0,
+      top: 0,
       width: '100%',
       height: 3,
       backgroundColor: '#000',
-      borderTopLeftRadius: 2,
-      borderTopRightRadius: 2,
+      borderBottomLeftRadius: 2,
+      borderBottomRightRadius: 2,
   },
   
   center: {
