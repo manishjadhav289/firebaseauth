@@ -486,6 +486,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 16,
     color: '#000',
+    fontFamily: 'Gilroy-Bold',
   },
   sectionTitle: {
     fontSize: 24,
@@ -493,12 +494,14 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     color: '#000',
     textAlign: 'center',
+    fontFamily: 'Gilroy-Bold',
   },
   subtitle: {
     fontSize: 16,
     marginBottom: 32,
     color: '#666',
     lineHeight: 22,
+    fontFamily: 'Gilroy-Regular',
   },
   buttonContainer: {
     gap: 12,
@@ -514,6 +517,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '500',
+    fontFamily: 'Gilroy-Medium',
   },
   whiteButton: {
     backgroundColor: '#fff',
@@ -527,6 +531,7 @@ const styles = StyleSheet.create({
     color: '#000',
     fontSize: 16,
     fontWeight: '600',
+    fontFamily: 'Gilroy-Medium',
   },
   greenButton: {
     backgroundColor: '#00e600',
@@ -539,16 +544,19 @@ const styles = StyleSheet.create({
     color: '#000',
     fontSize: 16,
     fontWeight: 'bold',
+    fontFamily: 'Gilroy-Bold',
   },
   disclaimer: {
     fontSize: 12,
     color: '#888',
     textAlign: 'center',
     lineHeight: 18,
+    fontFamily: 'Gilroy-Regular',
   },
   bold: {
     fontWeight: 'bold',
     color: '#000',
+    fontFamily: 'Gilroy-Bold',
   },
   input: {
     borderWidth: 1,
@@ -560,6 +568,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#000',
     backgroundColor: '#fff',
+    fontFamily: 'Gilroy-Regular',
   },
   errorText: {
     color: '#d32f2f',
@@ -567,6 +576,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 14,
     marginTop: 10,
+    fontFamily: 'Gilroy-Regular',
   },
   buttonDisabled: {
     opacity: 0.6,
@@ -575,6 +585,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 16,
     color: '#666',
+    fontFamily: 'Gilroy-Regular',
   },
   linkButton: {
     marginTop: 16,
@@ -583,6 +594,7 @@ const styles = StyleSheet.create({
   linkText: {
     color: '#007AFF',
     fontSize: 14,
+    fontFamily: 'Gilroy-Medium',
   },
   formContainer: {
     marginTop: 20,
@@ -592,6 +604,7 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     color: '#000',
     marginBottom: 8,
+    fontFamily: 'Gilroy-Bold',
   },
   formSubtitle: {
     fontSize: 14,
@@ -599,6 +612,7 @@ const styles = StyleSheet.create({
     color: '#444',
     marginBottom: 32,
     lineHeight: 20,
+    fontFamily: 'Gilroy-Medium',
   },
   inputGroup: {
     marginBottom: 24,
@@ -609,12 +623,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     marginBottom: 4,
+    fontFamily: 'Gilroy-Regular',
   },
   minimalInput: {
     fontSize: 16,
     color: '#000',
     paddingVertical: 8,
     paddingHorizontal: 0,
+    fontFamily: 'Gilroy-Regular',
   },
   darkButton: {
     backgroundColor: '#0b2e26', // Dark Green almost black
@@ -628,5 +644,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+    fontFamily: 'Gilroy-Bold',
   },
 });

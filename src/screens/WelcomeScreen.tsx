@@ -66,6 +66,7 @@ const styles = StyleSheet.create({
         fontWeight: '900',
         color: '#fff',
         letterSpacing: -1,
+        fontFamily: 'Gilroy-Heavy',
     },
     signInButton: {
         backgroundColor: 'rgba(255,255,255,0.1)',
@@ -77,6 +78,7 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: '600',
         fontSize: 14,
+        fontFamily: 'Gilroy-Medium',
     },
     content: {
         flex: 1,
@@ -88,6 +90,7 @@ const styles = StyleSheet.create({
         color: '#fff', // Or slightly transparent white if needed
         lineHeight: 48,
         textTransform: 'uppercase',
+        fontFamily: 'Gilroy-Heavy',
     },
     heroTextGreen: {
         color: '#00ff00', // Neon green accent if needed
@@ -97,15 +100,18 @@ const styles = StyleSheet.create({
         fontSize: 18,
         marginTop: 24,
         marginBottom: 8,
+        fontFamily: 'Gilroy-Medium',
     },
     bodyText: {
         color: '#aaa',
         fontSize: 16,
         lineHeight: 24,
+        fontFamily: 'Gilroy-Regular',
     },
     boldWhite: {
         color: '#fff',
         fontWeight: 'bold',
+        fontFamily: 'Gilroy-Bold',
     },
     footer: {
         paddingBottom: 32,
@@ -121,6 +127,7 @@ const styles = StyleSheet.create({
         color: '#000',
         fontWeight: 'bold',
         fontSize: 18,
+        fontFamily: 'Gilroy-Bold',
     },
     whiteButton: {
         backgroundColor: '#fff',
@@ -132,5 +139,6 @@ const styles = StyleSheet.create({
         color: '#000',
         fontWeight: 'bold',
         fontSize: 16,
+        fontFamily: 'Gilroy-Bold',
     },
 });

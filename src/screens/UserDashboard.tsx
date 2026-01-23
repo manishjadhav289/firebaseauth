@@ -107,17 +107,20 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 8,
     color: '#000',
+    fontFamily: 'Gilroy-Bold',
   },
   subtitle: {
     fontSize: 16,
     color: '#444',
     marginBottom: 16,
+    fontFamily: 'Gilroy-Regular',
   },
   statusText: {
     fontSize: 14,
     color: '#4caf50', // Green
     fontWeight: '600',
     marginBottom: 40,
+    fontFamily: 'Gilroy-Medium',
   },
   signOutButton: {
     backgroundColor: '#d32f2f',
@@ -129,6 +132,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+    fontFamily: 'Gilroy-Medium',
   },
   buttonDisabled: {
     opacity: 0.6,
