@@ -12,6 +12,7 @@ import { LoginScreen } from './src/screens/LoginScreen';
 import { UserDashboard } from './src/screens/UserDashboard';
 import { WelcomeScreen } from './src/screens/WelcomeScreen';
 import { VerificationPendingScreen } from './src/screens/VerificationPendingScreen';
+import { TermsScreen } from './src/screens/TermsScreen';
 
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { ActivityIndicator } from 'react-native';
@@ -29,6 +30,7 @@ function AppContent() {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
   const [authMode, setAuthMode] = useState<'login' | 'signup' | null>(null);
+  const [showingTerms, setShowingTerms] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
 
   // Handle user state changes
@@ -114,7 +116,14 @@ function AppContent() {
               setAuthMode(null);
             }}
             onBack={() => setAuthMode(null)}
+            onShowTerms={() => setShowingTerms(true)}
           />
+        </View>
+      )}
+
+      {showingTerms && (
+        <View style={[StyleSheet.absoluteFill, { zIndex: 2 }]}>
+          <TermsScreen onClose={() => setShowingTerms(false)} />
         </View>
       )}
     </View>

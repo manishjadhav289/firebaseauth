@@ -18,9 +18,10 @@ interface LoginScreenProps {
   mode: 'login' | 'signup';
   onLoginSuccess?: () => void;
   onBack?: () => void;
+  onShowTerms?: () => void;
 }
 
-export function LoginScreen({ mode: initialMode, onLoginSuccess, onBack }: LoginScreenProps) {
+export function LoginScreen({ mode: initialMode, onLoginSuccess, onBack, onShowTerms }: LoginScreenProps) {
   const [authMethod, setAuthMethod] = useState<'selection' | 'email' | 'phone' | 'forgotPassword'>('selection');
   const [resetSent, setResetSent] = useState(false);
 
@@ -237,7 +238,10 @@ export function LoginScreen({ mode: initialMode, onLoginSuccess, onBack }: Login
                 </View>
 
                 <Text style={styles.disclaimer}>
-                  By continuing, you agree to our <Text style={styles.bold}>Terms of Service</Text> and confirm that you've read our <Text style={styles.bold}>Privacy Policy</Text>.
+                  By continuing, you agree to our{' '}
+                  <Text style={styles.bold} onPress={onShowTerms}>Terms of Service</Text>
+                  {' '}and confirm that you've read our{' '}
+                  <Text style={styles.bold}>Privacy Policy</Text>.
                 </Text>
 
                 {initialMode === 'login' && (
@@ -296,7 +300,10 @@ export function LoginScreen({ mode: initialMode, onLoginSuccess, onBack }: Login
                 </TouchableOpacity>
 
                 <Text style={styles.disclaimer}>
-                  By continuing, you agree to our <Text style={styles.bold}>Terms of Service</Text> and confirm that you've read our <Text style={styles.bold}>Privacy Policy</Text>.
+                  By continuing, you agree to our{' '}
+                  <Text style={styles.bold} onPress={onShowTerms}>Terms of Service</Text>
+                  {' '}and confirm that you've read our{' '}
+                  <Text style={styles.bold}>Privacy Policy</Text>.
                 </Text>
               </View>
             )}
