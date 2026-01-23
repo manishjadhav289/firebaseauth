@@ -5,7 +5,7 @@
  * @format
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StatusBar, useColorScheme, View, StyleSheet } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { LoginScreen } from './src/screens/LoginScreen';
@@ -33,9 +33,36 @@ function AppContent() {
   const [showingTerms, setShowingTerms] = useState<'terms' | 'privacy' | null>(null);
   const [isVerified, setIsVerified] = useState(false);
 
-  // ... (useEffects remain same)
+  // Handle user state changes
+  function onAuthStateChanged(user: FirebaseAuthTypes.User | null) {
+    setUser(user);
+    if (initializing) setInitializing(false);
+  }
 
-  // ... 
+  useEffect(() => {
+    console.log('App: Setting up auth subscriber');
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber; // unsubscribe on unmount
+  }, []);
+
+  if (initializing) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0b2e26' }}>
+        <ActivityIndicator size="large" color="#00e600" />
+      </View>
+    );
+  }
+
+  if (user) {
+    return (
+      <UserDashboard
+        onSignOut={async () => {
+          console.log('User signed out');
+          // Auth state listener will handle the state update
+        }}
+      />
+    );
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -49,6 +76,7 @@ function AppContent() {
             mode={authMode}
             onLoginSuccess={() => {
               setAuthMode(null);
+              // user state update via onAuthStateChanged will switch screen
             }}
             onBack={() => setAuthMode(null)}
             onShowTerms={(tab) => setShowingTerms(tab || 'terms')}
@@ -58,9 +86,9 @@ function AppContent() {
 
       {showingTerms && (
         <View style={[StyleSheet.absoluteFill, { zIndex: 2 }]}>
-          <TermsScreen 
-              initialTab={showingTerms}
-              onClose={() => setShowingTerms(null)} 
+          <TermsScreen
+            initialTab={showingTerms}
+            onClose={() => setShowingTerms(null)}
           />
         </View>
       )}

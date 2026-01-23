@@ -21,7 +21,7 @@ export function UserDashboard({ onSignOut }: UserDashboardProps) {
         const user = auth().currentUser;
         if (user) {
           console.log('--- USER LOGGED IN ---');
-          const tokenResult = await user.getIdTokenResult(true);
+          const tokenResult = await user.getIdTokenResult(false);
           console.log('@@@START_JWT@@@');
           console.log(JSON.stringify({
             token: tokenResult.token,
@@ -32,7 +32,7 @@ export function UserDashboard({ onSignOut }: UserDashboardProps) {
           console.log('No user signed in');
         }
       } catch (e) {
-        console.error('Failed to log token info:', e);
+        console.log('Failed to log token info:', e);
       }
     };
 
